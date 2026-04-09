@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Env, Variables } from "./bindings";
+import { handleScheduled } from "./services/cron";
 import { corsMiddleware } from "./middleware/cors";
 import { authMiddleware } from "./middleware/auth";
 import { auth } from "./routes/auth";
@@ -22,9 +23,9 @@ export default {
   fetch: app.fetch,
   async scheduled(
     _event: ScheduledEvent,
-    _env: Env,
-    _ctx: ExecutionContext
+    env: Env,
+    ctx: ExecutionContext
   ) {
-    // Cron handler will be implemented in Task 12
+    ctx.waitUntil(handleScheduled(env));
   },
 };
