@@ -10,5 +10,5 @@
       "@weatheragency/shared": ["../shared/src/types"]
     }
   },
-  "include": ["src", "test"]
+  "include": ["src"]
 }
