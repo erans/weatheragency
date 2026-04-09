@@ -5,10 +5,9 @@ import type {
   AnalyticsResponse,
   ModelsResponse,
   AuthMeResponse,
-  RegisterRequest,
-  RegisterResponse,
-  LoginRequest,
-  LoginResponse,
+  MagicLinkRequest,
+  MagicLinkResponse,
+  VerifyMagicLinkResponse,
   RegenerateTokenResponse,
   CreateReportRequest,
   CreateReportResponse,
@@ -81,17 +80,14 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
-  register: (body: RegisterRequest) =>
-    apiFetch<RegisterResponse>("/api/auth/register", {
+  requestMagicLink: (body: MagicLinkRequest) =>
+    apiFetch<MagicLinkResponse>("/api/auth/magic-link", {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
-  login: (body: LoginRequest) =>
-    apiFetch<LoginResponse>("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+  verifyMagicLink: (token: string) =>
+    apiFetch<VerifyMagicLinkResponse>(`/api/auth/verify?token=${encodeURIComponent(token)}`),
 
   getMe: () => apiFetch<AuthMeResponse>("/api/auth/me"),
 

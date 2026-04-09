@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client";
-import type { RegisterRequest, LoginRequest } from "@weatheragency/shared";
+import type { MagicLinkRequest } from "@weatheragency/shared";
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -13,18 +13,14 @@ export function useAuth() {
     retry: false,
   });
 
-  const register = useMutation({
-    mutationFn: (body: RegisterRequest) => api.register(body),
-    onSuccess: (data) => {
-      localStorage.setItem("wa_token", data.token);
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-    },
+  const requestMagicLink = useMutation({
+    mutationFn: (body: MagicLinkRequest) => api.requestMagicLink(body),
   });
 
-  const login = useMutation({
-    mutationFn: (body: LoginRequest) => api.login(body),
-    onSuccess: (_data, variables) => {
-      localStorage.setItem("wa_token", variables.token);
+  const verifyMagicLink = useMutation({
+    mutationFn: (token: string) => api.verifyMagicLink(token),
+    onSuccess: (data) => {
+      localStorage.setItem("wa_token", data.token);
       queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
@@ -46,8 +42,8 @@ export function useAuth() {
     user: me.data,
     isLoggedIn: !!token && !!me.data,
     isLoading: me.isLoading,
-    register,
-    login,
+    requestMagicLink,
+    verifyMagicLink,
     logout,
     regenerateToken,
   };
