@@ -98,6 +98,20 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   PRIMARY KEY (key, window)
 );
 
+-- Magic links: passwordless login tokens
+CREATE TABLE IF NOT EXISTS magic_links (
+  id          TEXT PRIMARY KEY,
+  email       TEXT NOT NULL,
+  name        TEXT,
+  token       TEXT NOT NULL UNIQUE,
+  expires_at  TEXT NOT NULL,
+  used_at     TEXT,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_magic_links_token ON magic_links(token);
+CREATE INDEX IF NOT EXISTS idx_magic_links_email ON magic_links(email);
+
 -- Seed: providers (for status page scraping)
 INSERT OR IGNORE INTO providers (id, name, status_page_url, status_page_type) VALUES
   ('anthropic',    'Anthropic',     'https://status.anthropic.com',  'statuspage_io'),

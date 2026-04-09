@@ -102,7 +102,21 @@ export interface RegisterRequest {
   name?: string;
 }
 
-export interface LoginRequest {
+export interface MagicLinkRequest {
+  email: string;
+  name?: string;
+}
+
+export interface MagicLinkResponse {
+  sent: boolean;
+}
+
+export interface VerifyMagicLinkRequest {
+  token: string;
+}
+
+export interface VerifyMagicLinkResponse {
+  user: User;
   token: string;
 }
 
@@ -191,10 +205,6 @@ export interface AuthMeResponse {
 export interface RegisterResponse {
   user: AuthMeResponse;
   token: string;
-}
-
-export interface LoginResponse {
-  user: AuthMeResponse;
 }
 
 export interface RegenerateTokenResponse {
