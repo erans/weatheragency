@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS models (
   name        TEXT NOT NULL,
   slug        TEXT NOT NULL UNIQUE,
   is_curated  INTEGER NOT NULL DEFAULT 0,
+  featured    INTEGER NOT NULL DEFAULT 0,
   status      TEXT NOT NULL DEFAULT 'pending',
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -123,53 +124,32 @@ INSERT OR IGNORE INTO providers (id, name, status_page_url, status_page_type) VA
   ('groq',         'Groq',          'https://status.groq.com',       'statuspage_io');
 
 -- Seed: models (curated catalog)
-INSERT OR IGNORE INTO models (id, provider, name, slug, is_curated, status) VALUES
-  ('claude-opus-4',       'anthropic', 'Claude Opus 4',       'claude-opus-4',       1, 'approved'),
-  ('claude-sonnet-4',     'anthropic', 'Claude Sonnet 4',     'claude-sonnet-4',     1, 'approved'),
-  ('claude-haiku-3.5',    'anthropic', 'Claude Haiku 3.5',    'claude-haiku-3-5',    1, 'approved'),
-  ('gpt-4o',              'openai',    'GPT-4o',              'gpt-4o',              1, 'approved'),
-  ('gpt-4.1',             'openai',    'GPT-4.1',             'gpt-4-1',            1, 'approved'),
-  ('o3',                  'openai',    'o3',                  'o3',                  1, 'approved'),
-  ('o4-mini',             'openai',    'o4-mini',             'o4-mini',             1, 'approved'),
-  ('gemini-2.5-pro',      'google',    'Gemini 2.5 Pro',      'gemini-2-5-pro',      1, 'approved'),
-  ('gemini-2.5-flash',    'google',    'Gemini 2.5 Flash',    'gemini-2-5-flash',    1, 'approved'),
-  ('grok-3',              'xai',       'Grok 3',              'grok-3',              1, 'approved'),
-  ('llama-4-maverick',    'meta',      'Llama 4 Maverick',    'llama-4-maverick',    1, 'approved'),
-  ('llama-4-scout',       'meta',      'Llama 4 Scout',       'llama-4-scout',       1, 'approved'),
-  ('deepseek-r1',         'deepseek',  'DeepSeek R1',         'deepseek-r1',         1, 'approved');
+INSERT OR IGNORE INTO models (id, provider, name, slug, is_curated, featured, status) VALUES
+  ('claude-opus-4.6',    'anthropic', 'Claude Opus 4.6',    'claude-opus-4-6',    1, 1, 'approved'),
+  ('claude-sonnet-4.6',  'anthropic', 'Claude Sonnet 4.6',  'claude-sonnet-4-6',  1, 1, 'approved'),
+  ('claude-sonnet-4.5',  'anthropic', 'Claude Sonnet 4.5',  'claude-sonnet-4-5',  1, 1, 'approved'),
+  ('claude-haiku-4.5',   'anthropic', 'Claude Haiku 4.5',   'claude-haiku-4-5',   1, 1, 'approved'),
+  ('gpt-5.4',       'openai', 'GPT-5.4',       'gpt-5-4',       1, 1, 'approved'),
+  ('gpt-5.4-mini',  'openai', 'GPT-5.4 Mini',  'gpt-5-4-mini',  1, 1, 'approved'),
+  ('gpt-5.4-nano',  'openai', 'GPT-5.4 Nano',  'gpt-5-4-nano',  1, 1, 'approved');
 
 -- Seed: endpoints (curated)
 INSERT OR IGNORE INTO endpoints (id, model_id, hosting_provider, is_official, label, is_curated, status) VALUES
   -- Anthropic models
-  ('claude-opus-4--anthropic',     'claude-opus-4',    'anthropic',    1, 'Anthropic API',  1, 'approved'),
-  ('claude-opus-4--aws-bedrock',   'claude-opus-4',    'aws-bedrock',  0, 'AWS Bedrock',    1, 'approved'),
-  ('claude-opus-4--gcp-vertex',    'claude-opus-4',    'gcp-vertex',   0, 'GCP Vertex AI',  1, 'approved'),
-  ('claude-sonnet-4--anthropic',   'claude-sonnet-4',  'anthropic',    1, 'Anthropic API',  1, 'approved'),
-  ('claude-sonnet-4--aws-bedrock', 'claude-sonnet-4',  'aws-bedrock',  0, 'AWS Bedrock',    1, 'approved'),
-  ('claude-sonnet-4--gcp-vertex',  'claude-sonnet-4',  'gcp-vertex',   0, 'GCP Vertex AI',  1, 'approved'),
-  ('claude-haiku-3.5--anthropic',  'claude-haiku-3.5', 'anthropic',    1, 'Anthropic API',  1, 'approved'),
-  ('claude-haiku-3.5--aws-bedrock','claude-haiku-3.5', 'aws-bedrock',  0, 'AWS Bedrock',    1, 'approved'),
+  ('claude-opus-4.6--anthropic',     'claude-opus-4.6',   'anthropic',   1, 'Anthropic API',  1, 'approved'),
+  ('claude-opus-4.6--aws-bedrock',   'claude-opus-4.6',   'aws-bedrock', 0, 'AWS Bedrock',    1, 'approved'),
+  ('claude-opus-4.6--gcp-vertex',    'claude-opus-4.6',   'gcp-vertex',  0, 'GCP Vertex AI',  1, 'approved'),
+  ('claude-sonnet-4.6--anthropic',   'claude-sonnet-4.6', 'anthropic',   1, 'Anthropic API',  1, 'approved'),
+  ('claude-sonnet-4.6--aws-bedrock', 'claude-sonnet-4.6', 'aws-bedrock', 0, 'AWS Bedrock',    1, 'approved'),
+  ('claude-sonnet-4.6--gcp-vertex',  'claude-sonnet-4.6', 'gcp-vertex',  0, 'GCP Vertex AI',  1, 'approved'),
+  ('claude-sonnet-4.5--anthropic',   'claude-sonnet-4.5', 'anthropic',   1, 'Anthropic API',  1, 'approved'),
+  ('claude-sonnet-4.5--aws-bedrock', 'claude-sonnet-4.5', 'aws-bedrock', 0, 'AWS Bedrock',    1, 'approved'),
+  ('claude-sonnet-4.5--gcp-vertex',  'claude-sonnet-4.5', 'gcp-vertex',  0, 'GCP Vertex AI',  1, 'approved'),
+  ('claude-haiku-4.5--anthropic',    'claude-haiku-4.5',  'anthropic',   1, 'Anthropic API',  1, 'approved'),
+  ('claude-haiku-4.5--aws-bedrock',  'claude-haiku-4.5',  'aws-bedrock', 0, 'AWS Bedrock',    1, 'approved'),
   -- OpenAI models
-  ('gpt-4o--openai',               'gpt-4o',           'openai',       1, 'OpenAI API',     1, 'approved'),
-  ('gpt-4o--azure-openai',         'gpt-4o',           'azure-openai', 0, 'Azure OpenAI',   1, 'approved'),
-  ('gpt-4.1--openai',              'gpt-4.1',          'openai',       1, 'OpenAI API',     1, 'approved'),
-  ('gpt-4.1--azure-openai',        'gpt-4.1',          'azure-openai', 0, 'Azure OpenAI',   1, 'approved'),
-  ('o3--openai',                    'o3',               'openai',       1, 'OpenAI API',     1, 'approved'),
-  ('o4-mini--openai',               'o4-mini',          'openai',       1, 'OpenAI API',     1, 'approved'),
-  -- Google models
-  ('gemini-2.5-pro--google',        'gemini-2.5-pro',   'google',       1, 'Google AI',      1, 'approved'),
-  ('gemini-2.5-flash--google',      'gemini-2.5-flash', 'google',       1, 'Google AI',      1, 'approved'),
-  -- xAI
-  ('grok-3--xai',                   'grok-3',           'xai',          1, 'xAI API',        1, 'approved'),
-  -- Meta (open source — no official endpoint)
-  ('llama-4-maverick--together',    'llama-4-maverick', 'together',     0, 'Together AI',    1, 'approved'),
-  ('llama-4-maverick--fireworks',   'llama-4-maverick', 'fireworks',    0, 'Fireworks AI',   1, 'approved'),
-  ('llama-4-maverick--groq',        'llama-4-maverick', 'groq',         0, 'Groq',           1, 'approved'),
-  ('llama-4-maverick--aws-bedrock', 'llama-4-maverick', 'aws-bedrock',  0, 'AWS Bedrock',    1, 'approved'),
-  ('llama-4-scout--together',       'llama-4-scout',    'together',     0, 'Together AI',    1, 'approved'),
-  ('llama-4-scout--fireworks',      'llama-4-scout',    'fireworks',    0, 'Fireworks AI',   1, 'approved'),
-  ('llama-4-scout--groq',           'llama-4-scout',    'groq',         0, 'Groq',           1, 'approved'),
-  -- DeepSeek
-  ('deepseek-r1--deepseek',         'deepseek-r1',      'deepseek',     1, 'DeepSeek API',   1, 'approved'),
-  ('deepseek-r1--together',         'deepseek-r1',      'together',     0, 'Together AI',    1, 'approved'),
-  ('deepseek-r1--fireworks',        'deepseek-r1',      'fireworks',    0, 'Fireworks AI',   1, 'approved');
+  ('gpt-5.4--openai',               'gpt-5.4',      'openai',       1, 'OpenAI API',   1, 'approved'),
+  ('gpt-5.4--azure-openai',         'gpt-5.4',      'azure-openai', 0, 'Azure OpenAI', 1, 'approved'),
+  ('gpt-5.4-mini--openai',          'gpt-5.4-mini', 'openai',       1, 'OpenAI API',   1, 'approved'),
+  ('gpt-5.4-mini--azure-openai',    'gpt-5.4-mini', 'azure-openai', 0, 'Azure OpenAI', 1, 'approved'),
+  ('gpt-5.4-nano--openai',          'gpt-5.4-nano', 'openai',       1, 'OpenAI API',   1, 'approved');

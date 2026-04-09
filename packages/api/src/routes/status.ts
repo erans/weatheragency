@@ -11,7 +11,7 @@ status.get("/", async (c) => {
            e.id as endpoint_id, e.label, e.hosting_provider, e.is_official
     FROM models m
     JOIN endpoints e ON e.model_id = m.id AND e.status = 'approved'
-    WHERE m.status = 'approved'
+    WHERE m.status = 'approved' AND m.featured = 1
     ORDER BY m.provider, m.name
   `).all();
 

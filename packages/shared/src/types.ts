@@ -14,6 +14,7 @@ export interface Model {
   name: string;
   slug: string;
   is_curated: number;
+  featured: number;
   status: "pending" | "approved" | "rejected";
   created_at: string;
 }
