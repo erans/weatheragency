@@ -118,27 +118,23 @@ auth.post("/magic-link", async (c) => {
     return c.json({ error: "email is required" }, 400);
   }
 
-  // Rate limit: max 3 magic links per email per 10 minutes
-  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-  const recentCount = await c.env.DB.prepare(
-    "SELECT COUNT(*) as cnt FROM magic_links WHERE email = ? AND created_at > ?"
-  )
-    .bind(email, tenMinutesAgo)
-    .first<{ cnt: number }>();
-
-  if (recentCount && recentCount.cnt >= 3) {
-    return c.json({ error: "Too many requests. Please try again later." }, 429);
-  }
-
+  // Rate limit: atomic insert-if-under-limit to prevent race condition
   const id = crypto.randomUUID();
   const token = generateMagicToken();
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 
-  await c.env.DB.prepare(
-    "INSERT INTO magic_links (id, email, name, token, expires_at) VALUES (?, ?, ?, ?, ?)"
+  const insertResult = await c.env.DB.prepare(
+    `INSERT INTO magic_links (id, email, name, token, expires_at)
+     SELECT ?, ?, ?, ?, ?
+     WHERE (SELECT COUNT(*) FROM magic_links WHERE email = ? AND created_at > ?) < 3`
   )
-    .bind(id, email, name ?? null, token, expiresAt)
+    .bind(id, email, name ?? null, token, expiresAt, email, tenMinutesAgo)
     .run();
+
+  if (!insertResult.meta.changes) {
+    return c.json({ error: "Too many requests. Please try again later." }, 429);
+  }
 
   const link = `${c.env.FRONTEND_URL}/verify?token=${token}`;
 
@@ -164,8 +160,8 @@ auth.post("/magic-link", async (c) => {
       msg.asRaw()
     );
     await c.env.SEND_EMAIL.send(emailMsg);
-  } catch {
-    // Don't leak email sending errors — still return success
+  } catch (err) {
+    console.error("Email send failed", err);
   }
 
   return c.json({ sent: true });
@@ -179,28 +175,23 @@ auth.get("/verify", async (c) => {
   }
 
   const now = new Date().toISOString();
-  const magicLink = await c.env.DB.prepare(
-    "SELECT id, email, name FROM magic_links WHERE token = ? AND used_at IS NULL AND expires_at > ?"
-  )
-    .bind(token, now)
-    .first<{ id: string; email: string; name: string | null }>();
 
-  if (!magicLink) {
+  // Atomic mark-as-used to prevent TOCTOU race
+  const updateResult = await c.env.DB.prepare(
+    "UPDATE magic_links SET used_at = ? WHERE token = ? AND used_at IS NULL AND expires_at > ? RETURNING email, name"
+  )
+    .bind(now, token, now)
+    .first<{ email: string; name: string | null }>();
+
+  if (!updateResult) {
     return c.json({ error: "Invalid or expired link" }, 400);
   }
-
-  // Mark as used
-  await c.env.DB.prepare(
-    "UPDATE magic_links SET used_at = ? WHERE id = ?"
-  )
-    .bind(new Date().toISOString(), magicLink.id)
-    .run();
 
   // Check if user exists
   const existingUser = await c.env.DB.prepare(
     "SELECT id, email, name, api_token, trust_score FROM users WHERE email = ?"
   )
-    .bind(magicLink.email)
+    .bind(updateResult.email)
     .first<{
       id: string;
       email: string;
@@ -228,14 +219,14 @@ auth.get("/verify", async (c) => {
   await c.env.DB.prepare(
     "INSERT INTO users (id, email, name, api_token) VALUES (?, ?, ?, ?)"
   )
-    .bind(userId, magicLink.email, magicLink.name, apiToken)
+    .bind(userId, updateResult.email, updateResult.name, apiToken)
     .run();
 
   return c.json({
     user: {
       id: userId,
-      email: magicLink.email,
-      name: magicLink.name,
+      email: updateResult.email,
+      name: updateResult.name,
       trust_score: 1.0,
     },
     token: apiToken,
