@@ -5,3 +5,5 @@ dist/
 .superpowers/
 .turbo/
 *.local
+tsconfig.tsbuildinfo
+packages/web/src/**/*.js
