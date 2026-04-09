@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router";
+import { useSearchParams, useNavigate, Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 
 export function Verify() {
@@ -12,15 +12,13 @@ export function Verify() {
     if (token && !verifyMagicLink.isPending && !verifyMagicLink.isSuccess && !verifyMagicLink.isError) {
       verifyMagicLink.mutate(token);
     }
-  }, [token]);
+  }, [token, verifyMagicLink]);
 
   useEffect(() => {
     if (verifyMagicLink.isSuccess) {
-      // Scrub token from URL for security
-      window.history.replaceState({}, "", "/verify");
       navigate("/settings", { replace: true });
     }
-  }, [verifyMagicLink.isSuccess]);
+  }, [verifyMagicLink.isSuccess, navigate]);
 
   if (!token) {
     return (
@@ -36,9 +34,9 @@ export function Verify() {
       <div className="mx-auto max-w-md text-center">
         <h1 className="mb-4 text-2xl font-bold">Link Expired</h1>
         <p className="mb-4 text-brand-subtitle">{verifyMagicLink.error.message}</p>
-        <a href="/login" className="text-sm text-brand-text underline">
+        <Link to="/login" className="text-sm text-brand-text underline">
           Request a new login link
-        </a>
+        </Link>
       </div>
     );
   }
