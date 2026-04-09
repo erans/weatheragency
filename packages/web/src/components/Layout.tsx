@@ -1,6 +1,9 @@
 import { Link, Outlet } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 export function Layout() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <div className="min-h-screen">
       <nav className="border-b border-brand-border px-6 py-4">
@@ -15,9 +18,15 @@ export function Layout() {
             <Link to="/suggest" className="hover:text-brand-text">
               Suggest a model
             </Link>
-            <Link to="/login" className="hover:text-brand-text">
-              Log in
-            </Link>
+            {isLoggedIn ? (
+              <Link to="/settings" className="hover:text-brand-text">
+                Settings
+              </Link>
+            ) : (
+              <Link to="/login" className="hover:text-brand-text">
+                Log in
+              </Link>
+            )}
           </div>
         </div>
       </nav>
