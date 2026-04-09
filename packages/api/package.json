@@ -13,13 +13,14 @@
   "dependencies": {
     "@weatheragency/shared": "workspace:*",
     "hono": "^4",
+    "mimetext": "^3.0.28",
     "ulidx": "^2"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8",
     "@cloudflare/workers-types": "^4",
+    "typescript": "^5.7",
     "vitest": "^3",
-    "wrangler": "^4",
-    "typescript": "^5.7"
+    "wrangler": "^4"
   }
 }
