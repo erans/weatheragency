@@ -8,7 +8,7 @@ crons = ["*/5 * * * *"]
 [[d1_databases]]
 binding = "DB"
 database_name = "weather-agency-db"
-database_id = "local"
+database_id = "361cbb4c-7b49-4e97-ba9a-27d9aa7e53cf"
 
 [vars]
 CORS_ORIGIN = "https://weather.agency"
