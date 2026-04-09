@@ -4,6 +4,7 @@ import { corsMiddleware } from "./middleware/cors";
 import { authMiddleware } from "./middleware/auth";
 import { auth } from "./routes/auth";
 import { models } from "./routes/models";
+import { reports } from "./routes/reports";
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -13,6 +14,7 @@ app.use("/api/*", authMiddleware());
 app.get("/api/health", (c) => c.json({ ok: true }));
 app.route("/api/auth", auth);
 app.route("/api/models", models);
+app.route("/api/reports", reports);
 
 export default {
   fetch: app.fetch,
