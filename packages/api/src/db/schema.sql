@@ -115,14 +115,11 @@ CREATE INDEX IF NOT EXISTS idx_magic_links_email ON magic_links(email);
 
 -- Seed: providers (for status page scraping)
 INSERT OR IGNORE INTO providers (id, name, status_page_url, status_page_type) VALUES
-  ('anthropic',    'Anthropic',     'https://status.anthropic.com',  'statuspage_io'),
-  ('openai',       'OpenAI',        'https://status.openai.com',     'statuspage_io'),
+  ('anthropic',    'Anthropic',     'https://status.claude.com',       'atom_feed'),
+  ('openai',       'OpenAI',        'https://status.openai.com',       'atom_feed'),
   ('google-cloud', 'Google Cloud',  'https://status.cloud.google.com', 'custom'),
-  ('aws',          'AWS',           'https://health.aws.amazon.com', 'custom'),
-  ('azure',        'Azure',         'https://status.azure.com',      'custom'),
-  ('together',     'Together AI',   'https://status.together.ai',    'statuspage_io'),
-  ('fireworks',    'Fireworks AI',  'https://status.fireworks.ai',   'statuspage_io'),
-  ('groq',         'Groq',          'https://status.groq.com',       'statuspage_io');
+  ('aws',          'AWS',           'https://health.aws.amazon.com',   'custom'),
+  ('azure',        'Azure',         'https://status.azure.com',        'custom');
 
 -- Seed: models (curated catalog)
 INSERT OR IGNORE INTO models (id, provider, name, slug, is_curated, featured, status) VALUES
