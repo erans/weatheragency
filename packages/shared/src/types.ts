@@ -74,6 +74,7 @@ export interface User {
   name: string | null;
   api_token: string;
   trust_score: number;
+  is_admin: number;
   created_at: string;
 }
 

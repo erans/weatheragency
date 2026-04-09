@@ -3,15 +3,16 @@ import { Link } from "react-router";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useAuth } from "../hooks/useAuth";
 
-export function Login() {
+export function Register() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const { requestMagicLink } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!turnstileToken) return;
-    requestMagicLink.mutate({ email, turnstileToken });
+    requestMagicLink.mutate({ email, name: name || undefined, turnstileToken });
   };
 
   if (requestMagicLink.isSuccess) {
@@ -36,9 +37,9 @@ export function Login() {
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="mb-6 text-2xl font-bold">Log In</h1>
+      <h1 className="mb-6 text-2xl font-bold">Create Account</h1>
       <p className="mb-4 text-sm text-brand-subtitle">
-        Enter your email to receive a login link. No password needed.
+        Register with your email and name. We'll send you a magic link to verify.
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -48,6 +49,16 @@ export function Login() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-brand-text outline-none focus:border-brand-subtitle"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm text-brand-subtitle">Name</label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-brand-text outline-none focus:border-brand-subtitle"
           />
         </div>
@@ -64,13 +75,13 @@ export function Login() {
           disabled={requestMagicLink.isPending || !turnstileToken}
           className="w-full rounded-lg bg-health-green px-4 py-2 font-medium text-brand-bg transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {requestMagicLink.isPending ? "Sending..." : "Send Login Link"}
+          {requestMagicLink.isPending ? "Sending..." : "Create Account"}
         </button>
       </form>
       <p className="mt-4 text-center text-sm text-brand-muted">
-        Don't have an account?{" "}
-        <Link to="/register" className="text-brand-text underline">
-          Register
+        Already have an account?{" "}
+        <Link to="/login" className="text-brand-text underline">
+          Log in
         </Link>
       </p>
     </div>
