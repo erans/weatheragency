@@ -5,6 +5,7 @@ export interface Env {
   CORS_ORIGIN: string;
   FRONTEND_URL: string;
   SEND_EMAIL: SendEmail;
+  TURNSTILE_SECRET_KEY: string;
 }
 
 // Extended Hono context variables

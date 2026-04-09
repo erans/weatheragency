@@ -105,6 +105,7 @@ export interface RegisterRequest {
 export interface MagicLinkRequest {
   email: string;
   name?: string;
+  turnstileToken: string;
 }
 
 export interface MagicLinkResponse {

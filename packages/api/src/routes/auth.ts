@@ -112,10 +112,35 @@ auth.post("/register", async (c) => {
 
 auth.post("/magic-link", async (c) => {
   const body = await c.req.json().catch(() => ({}));
-  const { email, name } = body as { email?: string; name?: string };
+  const { email, name, turnstileToken } = body as {
+    email?: string;
+    name?: string;
+    turnstileToken?: string;
+  };
 
   if (!email || typeof email !== "string") {
     return c.json({ error: "email is required" }, 400);
+  }
+
+  if (!turnstileToken) {
+    return c.json({ error: "CAPTCHA verification required" }, 400);
+  }
+
+  // Validate Turnstile token
+  const turnstileRes = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: c.env.TURNSTILE_SECRET_KEY,
+        response: turnstileToken,
+      }),
+    }
+  );
+  const turnstileData = await turnstileRes.json<{ success: boolean }>();
+  if (!turnstileData.success) {
+    return c.json({ error: "CAPTCHA verification failed" }, 400);
   }
 
   // Rate limit: atomic insert-if-under-limit to prevent race condition

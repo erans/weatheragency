@@ -1,14 +1,21 @@
 import { useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { useAuth } from "../hooks/useAuth";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const { requestMagicLink } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    requestMagicLink.mutate({ email, name: name || undefined });
+    if (!turnstileToken) return;
+    requestMagicLink.mutate({
+      email,
+      name: name || undefined,
+      turnstileToken,
+    });
   };
 
   if (requestMagicLink.isSuccess) {
@@ -59,12 +66,17 @@ export function Login() {
             className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-brand-text outline-none focus:border-brand-subtitle"
           />
         </div>
+        <Turnstile
+          siteKey="0x4AAAAAAC23QMaJK6UrtOOG"
+          onSuccess={setTurnstileToken}
+          onExpire={() => setTurnstileToken(null)}
+        />
         {requestMagicLink.isError && (
           <p className="text-sm text-health-red">{requestMagicLink.error.message}</p>
         )}
         <button
           type="submit"
-          disabled={requestMagicLink.isPending}
+          disabled={requestMagicLink.isPending || !turnstileToken}
           className="w-full rounded-lg bg-health-green px-4 py-2 font-medium text-brand-bg transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {requestMagicLink.isPending ? "Sending..." : "Send Login Link"}
