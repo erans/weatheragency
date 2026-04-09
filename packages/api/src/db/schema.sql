@@ -109,7 +109,6 @@ CREATE TABLE IF NOT EXISTS magic_links (
   created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_magic_links_token ON magic_links(token);
 CREATE INDEX IF NOT EXISTS idx_magic_links_email ON magic_links(email);
 
 -- Seed: providers (for status page scraping)
