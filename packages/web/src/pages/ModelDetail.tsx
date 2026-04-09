@@ -22,6 +22,9 @@ export function ModelDetail() {
   }
 
   const { model, endpoints } = modelData;
+  if (endpoints.length === 0) {
+    return <div className="text-brand-muted">No endpoints found for this model.</div>;
+  }
   const worstEndpoint = endpoints.reduce(
     (worst, ep) => (ep.score < worst.score ? ep : worst),
     endpoints[0]
