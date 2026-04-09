@@ -48,7 +48,7 @@ echo "WEATHER_AGENCY_TOKEN=${WEATHER_AGENCY_TOKEN:+set}"
 ```
 
 - If set: validate with `GET api.weather.agency/api/auth/me` using `Authorization: Bearer $WEATHER_AGENCY_TOKEN`. Greet the user by name.
-- If unset: note that the user is anonymous. Mention: "Register at weather.agency to increase your report weight."
+- If unset: note that the user is anonymous. Mention: "Log in at weather.agency (magic link, no password) to increase your report weight."
 
 ## Step 3A: Check Mode
 

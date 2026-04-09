@@ -89,12 +89,13 @@ pnpm build
 
 | Method | Path | Description |
 |--------|------|-------------|
+| `POST` | `/api/auth/magic-link` | Request a magic login link (sent via email) |
+| `GET` | `/api/auth/verify` | Verify magic link token, return API token |
 | `POST` | `/api/auth/register` | Create account (returns API token) |
-| `POST` | `/api/auth/login` | Validate token |
 | `GET` | `/api/auth/me` | Current user info |
 | `POST` | `/api/auth/regenerate-token` | Generate new API token |
 
-Authentication uses Bearer tokens with a `wa_` prefix. Anonymous reports are accepted but weighted lower.
+Authentication uses magic link emails for login. On verification, users receive a Bearer token with a `wa_` prefix for API access. New accounts are created automatically on first login. Anonymous reports are accepted but weighted lower.
 
 ## Health Score Algorithm
 
@@ -129,7 +130,7 @@ Copy `skill/weather-report.md` into the tool's skill/prompt directory. The skill
 
 ### Authentication (Optional)
 
-For higher-weight reports, register at [weather.agency](https://weather.agency) and set the token in your shell:
+For higher-weight reports, log in at [weather.agency](https://weather.agency) using your email (magic link, no password needed). After logging in, copy your API token from the Settings page and set it in your shell:
 
 ```bash
 export WEATHER_AGENCY_TOKEN=wa_your_token_here
